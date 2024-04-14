@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#404040"
+    android:minHeight="?attr/actionBarSize"
+    android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
+
+    <Button
+        android:id="@+id/batras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:src="@drawable/baseline_arrow_back_24"
+        android:text="Atras"
+        android:textColorLink="#00FFFFFF" />
+
+</androidx.appcompat.widget.Toolbar>

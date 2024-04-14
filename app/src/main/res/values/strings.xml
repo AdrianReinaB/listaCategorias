@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">App</string>
+    <string name="title_activity_items">items</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+
+</resources>
