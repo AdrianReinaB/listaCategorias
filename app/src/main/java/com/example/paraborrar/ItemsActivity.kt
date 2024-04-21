@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,9 +18,10 @@ import com.example.listacategoria.modelo.entidades.Categoria
 import com.example.listacategoria.modelo.entidades.Item
 import com.example.listacategoria.modelo.entidades.Tarea
 import com.example.listacategoria.modelo.interfaces.InterfaceDaoTareas
+import com.example.paraborrar.adapters.CategoriaAdapter
 import com.example.paraborrar.adapters.ItemAdapter
 
-class ItemsActivity : AppCompatActivity() {
+class ItemsActivity : AppCompatActivity(), ItemAdapter.OnItemClickListener {
 
     lateinit var recyclerview: RecyclerView
     lateinit var daoTarea: InterfaceDaoTareas
@@ -29,6 +31,7 @@ class ItemsActivity : AppCompatActivity() {
 
     //Abrir la conexion con la base de datos
     val conexion = BDFichero(this)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,20 +51,8 @@ class ItemsActivity : AppCompatActivity() {
 
         recyclerview = findViewById<RecyclerView>(R.id.recyclerview)
         recyclerview.layoutManager = LinearLayoutManager(this)
-        val adapter = ItemAdapter(daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString())))
+        val adapter = ItemAdapter(daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString())), this)
         recyclerview.adapter = adapter
-        adapter.setOnItemClickListener(object : ItemAdapter.onItemClickListener{
-            override fun onItemCLick(nombreTarea: String) {
-
-            }
-        })
-
-
-        var estado=daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString()))
-        for (est in estado){
-            Log.d("estado", "${est.activo}")
-        }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -84,10 +75,7 @@ class ItemsActivity : AppCompatActivity() {
 
                 builder.setPositiveButton("Aceptar"){ dialog, which ->
                     daoTarea.addItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(nombreItem.text.toString(), true))
-
-                    val adapter = ItemAdapter(daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString())))
-                    recyclerview.adapter = adapter
-                    recyclerview.adapter?.notifyDataSetChanged()
+                    recargarDatos()
                 }
 
                 builder.setNegativeButton("Cancelar"){ dialog, which ->
@@ -113,7 +101,19 @@ class ItemsActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
 
+    private fun recargarDatos() {
+        val adapter = ItemAdapter(daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString())), this)
+        recyclerview.adapter = adapter
+    }
+
+    override fun onItemClick(position: Int) {
+        val item = daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString()))[position]
+        if(!item.activo) {
+            item.activo = true
+            Toast.makeText(this, item.activo.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 }

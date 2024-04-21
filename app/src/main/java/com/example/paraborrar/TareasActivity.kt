@@ -16,9 +16,10 @@ import com.example.listacategoria.modelo.daos.tareas.DaoTareasFichero
 import com.example.listacategoria.modelo.entidades.Categoria
 import com.example.listacategoria.modelo.entidades.Tarea
 import com.example.listacategoria.modelo.interfaces.InterfaceDaoTareas
+import com.example.paraborrar.adapters.CategoriaAdapter
 import com.example.paraborrar.adapters.TareaAdapter
 
-class TareasActivity : AppCompatActivity() {
+class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener {
 
     lateinit var recyclerview: RecyclerView
     lateinit var daoTarea: InterfaceDaoTareas
@@ -27,6 +28,7 @@ class TareasActivity : AppCompatActivity() {
 
     //Abrir la conexion con la base de datos
     val conexion = BDFichero(this)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,26 +47,9 @@ class TareasActivity : AppCompatActivity() {
 
         recyclerview = findViewById<RecyclerView>(R.id.recyclerview)
         recyclerview.layoutManager = LinearLayoutManager(this)
-        val adapter = TareaAdapter(daoTarea.getTareas(Categoria(nombre.toString())))
+
+        val adapter = TareaAdapter(daoTarea.getTareas(Categoria(nombre.toString())), this)
         recyclerview.adapter = adapter
-        adapter.setOnItemClickListener(object : TareaAdapter.onItemClickListener{
-            override fun onItemCLick(nombreTarea: String) {
-                //daoTarea.addTarea(Categoria(nombreCategoria), Tarea("sdgf"))
-                //daoTarea.addItem(Categoria(nombreCategoria), Tarea("sdgf"), Item("fg", true))
-                var intent = Intent(this@TareasActivity, ItemsActivity::class.java)
-                intent.putExtra("nombreTar", nombreTarea)
-                intent.putExtra("nombreCat", nombre)
-                startActivity(intent)
-
-                /*daoTarea.getTareas(Categoria(nombreCategoria)).forEach(){
-                    Log.d("tareas", it.nombre)
-                }
-                Toast.makeText(this@MainActivity, "Clicaste: $nombreCategoria", Toast.LENGTH_SHORT).show()
-            */
-            }
-
-        })
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -87,14 +72,10 @@ class TareasActivity : AppCompatActivity() {
 
                 builder.setPositiveButton("Aceptar"){ dialog, which ->
                     daoTarea.addTarea(Categoria(nombre.toString()), Tarea(nombreTar.text.toString()))
-
-                    val adapter = TareaAdapter(daoTarea.getTareas(Categoria(nombre.toString())))
-                    recyclerview.adapter = adapter
-                    recyclerview.adapter?.notifyDataSetChanged()
+                    recargarDatos()
                 }
 
                 builder.setNegativeButton("Cancelar"){ dialog, which ->
-
                 }
 
                 val dialog: AlertDialog = builder.create()
@@ -102,10 +83,26 @@ class TareasActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
-
         }
     }
 
+    private fun recargarDatos() {
+        val adapter = TareaAdapter(daoTarea.getTareas(Categoria(nombre.toString())), this)
+        recyclerview.adapter = adapter
+    }
+
+    override fun onTextViewClick(position: Int) {
+        val tarea = daoTarea.getTareas(Categoria(nombre.toString()))[position]
+        var intent = Intent(this@TareasActivity, ItemsActivity::class.java)
+        intent.putExtra("nombreTar", tarea.nombre)
+        intent.putExtra("nombreCat", nombre)
+        startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        recargarDatos()
+    }
 
 
 }

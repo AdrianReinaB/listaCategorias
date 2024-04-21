@@ -10,32 +10,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.listacategoria.modelo.entidades.Item
 import com.example.paraborrar.R
 
-class ItemAdapter (private val mList: List<Item>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter (private val mList: MutableList<Item>, private val mListener: OnItemClickListener) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
-    ///////////////////////////////////////////
-    private var mListener: onItemClickListener?=null
-
-
-    interface onItemClickListener{
-        fun onItemCLick(nombreItem: String)
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
     }
-
-    fun setOnItemClickListener(listener: onItemClickListener?){
-        mListener=listener
-
-    }
-    /////////////////////////////////////////////////
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.tarjetas_items, parent, false)
 
-        val listener = mListener ?: object : ItemAdapter.onItemClickListener {
-            override fun onItemCLick(nombreItem: String) {
-            }
-        }
 
-        return ViewHolder(view, listener)
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -43,31 +29,24 @@ class ItemAdapter (private val mList: List<Item>) : RecyclerView.Adapter<ItemAda
         val item = mList[position]
 
         holder.item.text = item.accion
+        holder.lineLayout.setOnClickListener{
+            mListener.onItemClick(position)
+        }
 
         if (item.activo) {
             holder.lineLayout.setBackgroundColor(Color.GREEN)
         } else {
             holder.lineLayout.setBackgroundColor(Color.RED)
         }
-
-
     }
 
     override fun getItemCount(): Int {
         return mList.size
     }
 
-    class ViewHolder(ItemView: View, listener: ItemAdapter.onItemClickListener) : RecyclerView.ViewHolder(ItemView) {
+    class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val item: TextView = itemView.findViewById(R.id.textView)
         val lineLayout: LinearLayout = itemView.findViewById(R.id.tarjeta)
-
-        /////////////////////////////////////////
-        init {
-            itemView.setOnClickListener{
-                listener.onItemCLick(item.text.toString())
-            }
-        }
-        //////////////////////////////////////////
     }
 
 

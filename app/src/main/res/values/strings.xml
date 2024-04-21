@@ -5,5 +5,8 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <string name="navigation_drawer_open">Abrir menú</string>
+    <string name="navigation_drawer_close">Cerrar menú</string>
+
 
 </resources>

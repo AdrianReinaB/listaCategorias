@@ -9,40 +9,29 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.listacategoria.modelo.entidades.Tarea
 import com.example.paraborrar.R
 
-class TareaAdapter (private val mList: List<Tarea>) : RecyclerView.Adapter<TareaAdapter.ViewHolder>() {
+class TareaAdapter (private val mList: MutableList<Tarea>, private val mListener: OnItemClickListener) : RecyclerView.Adapter<TareaAdapter.ViewHolder>() {
 
-    ///////////////////////////////////////////
-    private var mListener: onItemClickListener?=null
-
-
-    interface onItemClickListener{
-        fun onItemCLick(nombreTarea: String)
+    interface OnItemClickListener {
+        fun onTextViewClick(position: Int)
     }
-
-    fun setOnItemClickListener(listener: onItemClickListener?){
-        mListener=listener
-
-    }
-    /////////////////////////////////////////////////
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.tarjetas_tareas, parent, false)
 
-        val listener = mListener ?: object : onItemClickListener {
-            override fun onItemCLick(nombreTarea: String) {
-                }
+            return ViewHolder(view)
         }
 
-        return ViewHolder(view, listener)
-    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val tar = mList[position]
 
         holder.tar.text = tar.nombre
-        holder.nTar.text = tar.nItems.toString()
+        holder.tar.setOnClickListener{
+            mListener.onTextViewClick(position)
+        }
+        holder.nTar.text = tar.items.size.toString()
 
     }
 
@@ -50,17 +39,10 @@ class TareaAdapter (private val mList: List<Tarea>) : RecyclerView.Adapter<Tarea
         return mList.size
     }
 
-    class ViewHolder(ItemView: View, listener: onItemClickListener) : RecyclerView.ViewHolder(ItemView) {
+    class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val tar: TextView = itemView.findViewById(R.id.tar)
         val nTar: TextView = itemView.findViewById(R.id.numTar)
 
-        /////////////////////////////////////////
-        init {
-            itemView.setOnClickListener{
-                listener.onItemCLick(tar.text.toString())
-            }
-        }
-        //////////////////////////////////////////
     }
 
 

@@ -10,16 +10,23 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.listacategoria.modelo.conexiones.BDFichero
 import com.example.listacategoria.modelo.daos.categorias.DaoCategoriasFichero
 import com.example.listacategoria.modelo.entidades.Categoria
 import com.example.listacategoria.modelo.interfaces.InterfaceDaoCategorias
+import com.google.android.material.navigation.NavigationView
 
-class FormCat : AppCompatActivity() {
+class FormCat : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
 
     lateinit var daoCategoria: InterfaceDaoCategorias
+
+    private lateinit var drawer: DrawerLayout
+    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +42,20 @@ class FormCat : AppCompatActivity() {
         val nCat:EditText=findViewById(R.id.nCat)
         val bCat:Button=findViewById(R.id.catButton)
 
+        //Navigation Drawer
+        drawer = findViewById(R.id.drawer_layout)
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
         //toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         val atras: Button=findViewById(R.id.batras)
         setSupportActionBar(toolbar)
+        supportActionBar?.title="Fomulario"
+        ////////////////////
+        toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
 
         bCat.setOnClickListener{
             daoCategoria.addCategoria(Categoria(nCat.text.toString()))
@@ -98,5 +115,19 @@ class FormCat : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.drawer_cat -> {
+                var intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.drawer_formCat->{
+                Toast.makeText(this, "Ya estas en el formulario", Toast.LENGTH_SHORT).show()
+            }
+        }
+        drawer.closeDrawer(GravityCompat.START)
+        return true
     }
 }
