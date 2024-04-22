@@ -7,8 +7,12 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listacategoria.modelo.conexiones.BDFichero
@@ -18,8 +22,9 @@ import com.example.listacategoria.modelo.entidades.Tarea
 import com.example.listacategoria.modelo.interfaces.InterfaceDaoTareas
 import com.example.paraborrar.adapters.CategoriaAdapter
 import com.example.paraborrar.adapters.TareaAdapter
+import com.google.android.material.navigation.NavigationView
 
-class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener {
+class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     lateinit var recyclerview: RecyclerView
     lateinit var daoTarea: InterfaceDaoTareas
@@ -29,15 +34,29 @@ class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener {
     //Abrir la conexion con la base de datos
     val conexion = BDFichero(this)
 
+    private lateinit var drawer: DrawerLayout
+    private lateinit var toggle: ActionBarDrawerToggle
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tareas)
 
+        //Navigation Drawer
+        drawer = findViewById(R.id.drawer_layout)
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
         //toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title="Tareas"
+        ////////////////////
+        toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
 
         daoTarea= DaoTareasFichero()
         daoTarea.createConexion(conexion)
@@ -74,7 +93,6 @@ class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener {
                     daoTarea.addTarea(Categoria(nombre.toString()), Tarea(nombreTar.text.toString()))
                     recargarDatos()
                 }
-
                 builder.setNegativeButton("Cancelar"){ dialog, which ->
                 }
 
@@ -102,6 +120,21 @@ class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener {
     override fun onResume() {
         super.onResume()
         recargarDatos()
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.drawer_cat -> {
+                var intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.drawer_formCat->{
+                var intent = Intent(this, FormCat::class.java)
+                startActivity(intent)
+            }
+        }
+        drawer.closeDrawer(GravityCompat.START)
+        return true
     }
 
 

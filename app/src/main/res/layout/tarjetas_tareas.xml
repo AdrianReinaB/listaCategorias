@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#9DE6E0"
+        android:background="@color/lavandaOscurete"
         android:orientation="horizontal"
         android:padding="5dp">
 
@@ -21,6 +21,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginLeft="15dp"
             android:text="tar"
+            android:textColor="@color/lavandaclaro"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -31,6 +32,7 @@
             android:layout_marginStart="25dp"
             android:layout_marginLeft="15dp"
             android:text="nTar"
+            android:textColor="@color/lavandaclaro"
             android:textSize="20sp"
             android:textStyle="bold" />
 

@@ -3,11 +3,14 @@ package com.example.paraborrar
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -18,6 +21,7 @@ import com.example.listacategoria.modelo.conexiones.BDFichero
 import com.example.listacategoria.modelo.daos.categorias.DaoCategoriasFichero
 import com.example.listacategoria.modelo.daos.tareas.DaoTareasFichero
 import com.example.listacategoria.modelo.entidades.Categoria
+import com.example.listacategoria.modelo.entidades.Tarea
 import com.example.listacategoria.modelo.interfaces.InterfaceDaoCategorias
 import com.example.listacategoria.modelo.interfaces.InterfaceDaoTareas
 import com.example.paraborrar.adapters.CategoriaAdapter
@@ -25,7 +29,7 @@ import com.google.android.material.navigation.NavigationView
 
 
 class MainActivity : AppCompatActivity(), CategoriaAdapter.OnItemClickListener,
-    CategoriaAdapter.OnTextViewClickListener, NavigationView.OnNavigationItemSelectedListener {
+    CategoriaAdapter.OnTextViewClickListener, NavigationView.OnNavigationItemSelectedListener{
 
     lateinit var recyclerview: RecyclerView
 
@@ -42,6 +46,7 @@ class MainActivity : AppCompatActivity(), CategoriaAdapter.OnItemClickListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //Navigation Drawer
         drawer = findViewById(R.id.drawer_layout)
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
@@ -109,10 +114,22 @@ class MainActivity : AppCompatActivity(), CategoriaAdapter.OnItemClickListener,
 
 
     override fun onItemClick(position: Int) {
-        val categoriaSeleccionada = daoCategoria.getCategorias()[position]
-        Log.d("categoria elimina", categoriaSeleccionada.nombre)
-        daoCategoria.deleteCategoria(Categoria(categoriaSeleccionada.nombre))
-        recargarDatos()
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("¡Atencion!")
+        builder.setMessage("Estas a punto de borrar una categoria entera\n¿Desea continuar?")
+        builder.setPositiveButton("Aceptar"){ dialog, which ->
+            val categoriaSeleccionada = daoCategoria.getCategorias()[position]
+            Log.d("categoria elimina", categoriaSeleccionada.nombre)
+            daoCategoria.deleteCategoria(Categoria(categoriaSeleccionada.nombre))
+            recargarDatos()
+        }
+
+        builder.setNegativeButton("Cancelar"){ dialog, which ->
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+
     }
 
     private fun recargarDatos() {
@@ -131,6 +148,7 @@ class MainActivity : AppCompatActivity(), CategoriaAdapter.OnItemClickListener,
         super.onResume()
         recargarDatos()
     }
+
 
 
 }

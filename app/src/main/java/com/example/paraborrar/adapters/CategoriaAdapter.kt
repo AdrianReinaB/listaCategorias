@@ -7,12 +7,17 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listacategoria.modelo.entidades.Categoria
 import com.example.paraborrar.R
 
-class CategoriaAdapter (private val mList: MutableList<Categoria>, private val mListener: OnItemClickListener, private val textListener: OnTextViewClickListener) : RecyclerView.Adapter<CategoriaAdapter.ViewHolder>() {
+class CategoriaAdapter(
+    private val mList: MutableList<Categoria>,
+    private val mListener: OnItemClickListener,
+    private val textListener: OnTextViewClickListener
+) : RecyclerView.Adapter<CategoriaAdapter.ViewHolder>() {
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -21,6 +26,7 @@ class CategoriaAdapter (private val mList: MutableList<Categoria>, private val m
     interface OnTextViewClickListener {
         fun onTextViewClick(position: Int)
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.tarjetas, parent, false)
@@ -33,16 +39,17 @@ class CategoriaAdapter (private val mList: MutableList<Categoria>, private val m
         val cat = mList[position]
 
         holder.textView.text = cat.nombre
-        holder.textView.setOnClickListener{
+        holder.textView.setOnClickListener {
             textListener.onTextViewClick(position)
         }
-    //////////
-        holder.imagen.setOnClickListener{
-        mListener.onItemClick(position)
+        //////////
+        holder.imagen.setOnClickListener {
+            mListener.onItemClick(position)
         }
-    ///////////
+        ///////////
 
     }
+
     override fun getItemCount(): Int {
         return mList.size
     }
