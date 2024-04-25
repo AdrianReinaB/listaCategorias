@@ -3,11 +3,8 @@ package com.example.paraborrar.adapters
 
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listacategoria.modelo.entidades.Categoria
@@ -20,7 +17,8 @@ class CategoriaAdapter(
 ) : RecyclerView.Adapter<CategoriaAdapter.ViewHolder>() {
 
     interface OnItemClickListener {
-        fun onItemClick(position: Int)
+        fun borradoCat(position: Int)
+        fun editarCat(position: Int)
     }
 
     interface OnTextViewClickListener {
@@ -43,8 +41,13 @@ class CategoriaAdapter(
             textListener.onTextViewClick(position)
         }
         //////////
-        holder.imagen.setOnClickListener {
-            mListener.onItemClick(position)
+        holder.borrado.setOnClickListener {
+            mListener.borradoCat(position)
+        }
+        ///////////
+        //////////
+        holder.editar.setOnClickListener {
+            mListener.editarCat(position)
         }
         ///////////
 
@@ -56,7 +59,8 @@ class CategoriaAdapter(
 
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val textView: TextView = itemView.findViewById(R.id.textView)
-        val imagen: ImageView = itemView.findViewById(R.id.image)
+        val borrado: ImageView = itemView.findViewById(R.id.borraCat)
+        val editar: ImageView = itemView.findViewById(R.id.editaCat)
 
     }
 

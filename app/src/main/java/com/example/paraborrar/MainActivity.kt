@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity(), CategoriaAdapter.OnItemClickListener,
     }
 
 
-    override fun onItemClick(position: Int) {
+    override fun borradoCat(position: Int) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("¡Atencion!")
         builder.setMessage("Estas a punto de borrar una categoria entera\n¿Desea continuar?")
@@ -126,9 +126,32 @@ class MainActivity : AppCompatActivity(), CategoriaAdapter.OnItemClickListener,
 
         builder.setNegativeButton("Cancelar"){ dialog, which ->
         }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    override fun editarCat(position: Int) {
+        val categoriaSeleccionada = daoCategoria.getCategorias()[position]
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Editar categoria ${categoriaSeleccionada.nombre}")
+
+        val inflater =LayoutInflater.from(this)
+        val dialogView =inflater.inflate(R.layout.dialog, null)
+        builder.setView(dialogView)
+
+        val nombreCat= dialogView.findViewById<EditText>(R.id.nuevoTexto)
+
+        builder.setPositiveButton("Aceptar"){ dialog, which ->
+            daoCategoria.updateCategoria(Categoria(categoriaSeleccionada.nombre), Categoria(nombreCat.text.toString()))
+            Toast.makeText(this, "Categoria cambiada con exito", Toast.LENGTH_SHORT).show()
+            recargarDatos()
+        }
+        builder.setNegativeButton("Cancelar"){ dialog, which ->
+        }
 
         val dialog: AlertDialog = builder.create()
         dialog.show()
+        true
 
     }
 

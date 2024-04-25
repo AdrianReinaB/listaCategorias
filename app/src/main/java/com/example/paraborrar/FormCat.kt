@@ -58,9 +58,17 @@ class FormCat : AppCompatActivity(), NavigationView.OnNavigationItemSelectedList
         toggle.syncState()
 
         bCat.setOnClickListener{
-            daoCategoria.addCategoria(Categoria(nCat.text.toString()))
-            Toast.makeText(this, "Categoria guardada", Toast.LENGTH_SHORT).show()
-            nCat.setText("")
+            if (nCat.text.toString().trim()!="") {
+                val categrias = daoCategoria.getCategorias()
+                var busquedaCat = categrias.find { it.nombre == nCat.text.toString() }
+                if (busquedaCat == null) {
+                    daoCategoria.addCategoria(Categoria(nCat.text.toString()))
+                    Toast.makeText(this, "Categoria guardada", Toast.LENGTH_SHORT).show()
+                    nCat.setText("")
+                } else {
+                    Toast.makeText(this, "Categoria duplicada", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         atras.setOnClickListener{
