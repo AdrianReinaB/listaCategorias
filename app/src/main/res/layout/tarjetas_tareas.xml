@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    app:cardElevation="6dp">
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/lavandaOscurete"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:id="@+id/linearTarea">
 
 
         <TextView
@@ -29,16 +30,23 @@
             android:id="@+id/numTar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="10dp"
             android:text="nTar"
             android:textColor="@color/lavandaclaro"
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <ImageView
+            android:id="@+id/imgPuntos"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_more_vert_24"
+            app:srcCompat="@drawable/baseline_more_vert_24" />
+
 
     </LinearLayout>
-
 
 
 </androidx.cardview.widget.CardView>

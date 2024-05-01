@@ -1,12 +1,16 @@
 package com.example.paraborrar
 
+import TareaAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -20,11 +24,9 @@ import com.example.listacategoria.modelo.daos.tareas.DaoTareasFichero
 import com.example.listacategoria.modelo.entidades.Categoria
 import com.example.listacategoria.modelo.entidades.Tarea
 import com.example.listacategoria.modelo.interfaces.InterfaceDaoTareas
-import com.example.paraborrar.adapters.CategoriaAdapter
-import com.example.paraborrar.adapters.TareaAdapter
 import com.google.android.material.navigation.NavigationView
 
-class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener, NavigationView.OnNavigationItemSelectedListener {
+class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener, NavigationView.OnNavigationItemSelectedListener{
 
     lateinit var recyclerview: RecyclerView
     lateinit var daoTarea: InterfaceDaoTareas
@@ -115,6 +117,51 @@ class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener, Na
         intent.putExtra("nombreTar", tarea.nombre)
         intent.putExtra("nombreCat", nombre)
         startActivity(intent)
+    }
+
+    override fun onMenuClick(position: Int) {
+        val tarea = daoTarea.getTareas(Categoria(nombre.toString()))[position]
+        showPopupMenu(tarea)
+    }
+
+    private fun showPopupMenu(tarea: Tarea) {
+        val imageView = findViewById<ImageView>(R.id.imgPuntos)
+        val popupMenu = PopupMenu(this, imageView)
+        popupMenu.inflate(R.menu.menu_recycler)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.recyclerEdit -> {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Editar tarea ${tarea.nombre}")
+
+                    val inflater =LayoutInflater.from(this)
+                    val dialogView =inflater.inflate(R.layout.dialog, null)
+                    builder.setView(dialogView)
+
+                    val nombreTar= dialogView.findViewById<EditText>(R.id.nuevoTexto)
+
+                    builder.setPositiveButton("Aceptar"){ dialog, which ->
+                        daoTarea.updateNombreTarea(Categoria(nombre.toString()), Tarea(tarea.nombre), Tarea(nombreTar.text.toString()))
+                        recargarDatos()
+                        Toast.makeText(this, "Tarea editada: ${tarea.nombre}", Toast.LENGTH_SHORT).show()
+                    }
+                    builder.setNegativeButton("Cancelar"){ dialog, which ->
+                    }
+
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show()
+                    true
+                }
+                R.id.recyclerDel -> {
+                    daoTarea.deleteTarea(Categoria(nombre.toString()), Tarea(tarea.nombre))
+                    Toast.makeText(this, "Tarea borrada: ${tarea.nombre}", Toast.LENGTH_SHORT).show()
+                    recargarDatos()
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 
     override fun onResume() {

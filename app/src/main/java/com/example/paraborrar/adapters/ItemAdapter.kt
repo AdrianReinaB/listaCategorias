@@ -1,11 +1,11 @@
 package com.example.paraborrar.adapters
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listacategoria.modelo.entidades.Item
 import com.example.paraborrar.R
@@ -14,6 +14,8 @@ class ItemAdapter (private val mList: MutableList<Item>, private val mListener: 
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
+
+        fun onLongClick(position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,12 +34,17 @@ class ItemAdapter (private val mList: MutableList<Item>, private val mListener: 
         holder.lineLayout.setOnClickListener{
             mListener.onItemClick(position)
         }
-
-        if (item.activo) {
-            holder.lineLayout.setBackgroundColor(Color.GREEN)
-        } else {
-            holder.lineLayout.setBackgroundColor(Color.RED)
+        holder.lineLayout.setOnLongClickListener {
+            mListener.onLongClick(position)
+            true
         }
+
+        val backgroundColor = if (item.activo) {
+            ContextCompat.getColor(holder.itemView.context, R.color.verde)
+        } else {
+            ContextCompat.getColor(holder.itemView.context, R.color.rojo)
+        }
+        holder.lineLayout.setBackgroundColor(backgroundColor)
     }
 
     override fun getItemCount(): Int {
@@ -46,7 +53,8 @@ class ItemAdapter (private val mList: MutableList<Item>, private val mListener: 
 
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val item: TextView = itemView.findViewById(R.id.textView)
-        val lineLayout: LinearLayout = itemView.findViewById(R.id.tarjeta)
+        val lineLayout: LinearLayout = itemView.findViewById(R.id.tarjetaItem)
+
     }
 
 

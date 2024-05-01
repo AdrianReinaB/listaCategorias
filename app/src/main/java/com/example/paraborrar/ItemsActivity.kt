@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -70,6 +71,8 @@ class ItemsActivity : AppCompatActivity(), ItemAdapter.OnItemClickListener, Navi
         recyclerview.layoutManager = LinearLayoutManager(this)
         val adapter = ItemAdapter(daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString())), this)
         recyclerview.adapter = adapter
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -91,7 +94,7 @@ class ItemsActivity : AppCompatActivity(), ItemAdapter.OnItemClickListener, Navi
                 val nombreItem= dialogView.findViewById<EditText>(R.id.nuevoTexto)
 
                 builder.setPositiveButton("Aceptar"){ dialog, which ->
-                    daoTarea.addItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(nombreItem.text.toString(), true))
+                    daoTarea.addItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(nombreItem.text.toString(), false))
                     recargarDatos()
                 }
 
@@ -104,17 +107,19 @@ class ItemsActivity : AppCompatActivity(), ItemAdapter.OnItemClickListener, Navi
                 true
             } R.id.act->{
                     var estado=daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString()))
-                    for (est in estado){
-                        est.activo=true
-                        Log.d("estadoT", "${est.activo}")
+                    for (item in estado){
+                        daoTarea.updateItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(item.accion, false), Item(item.accion, true))
+                        Log.d("estadoT", "${item.activo}")
                     }
+                recargarDatos()
                 true
             } R.id.dest->{
                 var estado=daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString()))
-                for (est in estado){
-                    est.activo=false
-                    Log.d("estadoF", "${est.activo}")
+                for (item in estado){
+                    daoTarea.updateItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(item.accion, true), Item(item.accion, false))
+                    Log.d("estadoF", "${item.activo}")
                 }
+                recargarDatos()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -130,12 +135,64 @@ class ItemsActivity : AppCompatActivity(), ItemAdapter.OnItemClickListener, Navi
         val item = daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString()))[position]
         if(item.activo) {
             daoTarea.updateItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(item.accion, true), Item(item.accion, false))
-            Toast.makeText(this, "Activado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Desactivado", Toast.LENGTH_SHORT).show()
+            recargarDatos()
         }else{
             daoTarea.updateItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(item.accion, false), Item(item.accion, true))
-            Toast.makeText(this, "Desactivado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Activado", Toast.LENGTH_SHORT).show()
+            recargarDatos()
         }
     }
+
+    override fun onLongClick(position: Int) {
+        val item = daoTarea.getItems(Categoria(nombreC.toString()), Tarea(nombreT.toString()))[position]
+        Toast.makeText(this, item.accion+" "+"presionado largo", Toast.LENGTH_SHORT).show()
+
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog2, null)
+        val builder = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setTitle("Opciones")
+
+        val dialog = builder.create()
+
+        val btnEdit: Button = dialogView.findViewById(R.id.btnEdit)
+        val btnDelete: Button = dialogView.findViewById(R.id.btnDelete)
+
+        btnEdit.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Editar ${item.accion}")
+
+            val inflater =LayoutInflater.from(this)
+            val dialogView =inflater.inflate(R.layout.dialog, null)
+            builder.setView(dialogView)
+
+            val nombreItem= dialogView.findViewById<EditText>(R.id.nuevoTexto)
+
+
+            builder.setPositiveButton("Aceptar"){ dialog, which ->
+                    daoTarea.updateItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(item.accion.toString(), item.activo), Item(nombreItem.text.toString(), item.activo))
+                    recargarDatos()
+            }
+
+
+            builder.setNegativeButton("Cancelar"){ dialog, which ->
+            }
+
+            val dialog1: AlertDialog = builder.create()
+            dialog1.show()
+            true
+            dialog.dismiss()
+        }
+
+        btnDelete.setOnClickListener {
+            daoTarea.deleteItem(Categoria(nombreC.toString()), Tarea(nombreT.toString()), Item(item.accion, item.activo))
+            recargarDatos()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
