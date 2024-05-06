@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listacategoria.modelo.entidades.Categoria
@@ -45,12 +46,12 @@ class CategoriaAdapter(
             mListener.borradoCat(position)
         }
         ///////////
+
         //////////
         holder.editar.setOnClickListener {
             mListener.editarCat(position)
         }
         ///////////
-
     }
 
     override fun getItemCount(): Int {
@@ -61,7 +62,6 @@ class CategoriaAdapter(
         val textView: TextView = itemView.findViewById(R.id.textView)
         val borrado: ImageView = itemView.findViewById(R.id.borraCat)
         val editar: ImageView = itemView.findViewById(R.id.editaCat)
-
     }
 
 

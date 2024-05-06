@@ -115,13 +115,14 @@ class MainActivity : AppCompatActivity(), CategoriaAdapter.OnItemClickListener,
 
     override fun borradoCat(position: Int) {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("¡Atencion!")
-        builder.setMessage("Estas a punto de borrar una categoria entera\n¿Desea continuar?")
-        builder.setPositiveButton("Aceptar"){ dialog, which ->
-            val categoriaSeleccionada = daoCategoria.getCategorias()[position]
-            Log.d("categoria elimina", categoriaSeleccionada.nombre)
-            daoCategoria.deleteCategoria(Categoria(categoriaSeleccionada.nombre))
-            recargarDatos()
+        val categoriaSeleccionada = daoCategoria.getCategorias()[position]
+            builder.setTitle("¡Atencion!")
+            builder.setMessage("Estas a punto de borrar una categoria entera\n¿Desea continuar?")
+            builder.setPositiveButton("Aceptar"){ dialog, which ->
+                daoCategoria.deleteCategoria(Categoria(categoriaSeleccionada.nombre))
+                recargarDatos()
+
+
         }
 
         builder.setNegativeButton("Cancelar"){ dialog, which ->

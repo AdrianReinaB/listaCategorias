@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.PopupMenu
@@ -71,38 +72,28 @@ class TareasActivity : AppCompatActivity(), TareaAdapter.OnItemClickListener, Na
 
         val adapter = TareaAdapter(daoTarea.getTareas(Categoria(nombre.toString())), this)
         recyclerview.adapter = adapter
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_tarea, menu)
-        return true
-    }
+        val fab: View = findViewById(R.id.fab)
+        fab.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Nueva tarea para $nombre")
 
+            val inflater =LayoutInflater.from(this)
+            val dialogView =inflater.inflate(R.layout.dialog, null)
+            builder.setView(dialogView)
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.nuevaTarea -> {
-                val builder = AlertDialog.Builder(this)
-                builder.setTitle("Nueva tarea para $nombre")
+            val nombreTar= dialogView.findViewById<EditText>(R.id.nuevoTexto)
 
-                val inflater =LayoutInflater.from(this)
-                val dialogView =inflater.inflate(R.layout.dialog, null)
-                builder.setView(dialogView)
-
-                val nombreTar= dialogView.findViewById<EditText>(R.id.nuevoTexto)
-
-                builder.setPositiveButton("Aceptar"){ dialog, which ->
-                    daoTarea.addTarea(Categoria(nombre.toString()), Tarea(nombreTar.text.toString()))
-                    recargarDatos()
-                }
-                builder.setNegativeButton("Cancelar"){ dialog, which ->
-                }
-
-                val dialog: AlertDialog = builder.create()
-                dialog.show()
-                true
+            builder.setPositiveButton("Aceptar"){ dialog, which ->
+                daoTarea.addTarea(Categoria(nombre.toString()), Tarea(nombreTar.text.toString()))
+                recargarDatos()
             }
-            else -> super.onOptionsItemSelected(item)
+            builder.setNegativeButton("Cancelar"){ dialog, which ->
+            }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+            true
         }
     }
 
